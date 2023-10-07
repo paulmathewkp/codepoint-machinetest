@@ -31,14 +31,14 @@ function Filter() {
                         <StyledModalHeader>
                             <SearchTextField
                                 placeholder='Select Filter'
-                                style={{
-                                    root: {
-                                        width: '70%'
-                                    },
-                                    input: {
-                                        fontSize: 12
-                                    }
-                                }}
+                                // style={{
+                                //     root: {
+                                //         width: '70%'
+                                //     },
+                                //     input: {
+                                //         fontSize: 12
+                                //     }
+                                // }}
                             />
                             <IconButton onClick={handleClose}>
                                 <Close sx={{ color: '#000000' }} />
@@ -99,7 +99,9 @@ function Filter() {
                                 <Stack gap='5px'>
                                     <StyledMutedText>Selected Filters</StyledMutedText>
                                     <Stack direction='row'>
-                                        <StyledFilterChip style={{ root: { border: '1px solid #417EE3', borderRadius: '21px', padding: '4px 10px' } }}>
+                                        <StyledFilterChip 
+                                        // style={{ root: { border: '1px solid #417EE3', borderRadius: '21px', padding: '4px 10px' } }}
+                                        >
                                             High School is not *** <Close />
                                         </StyledFilterChip>
                                     </Stack>

@@ -7,6 +7,11 @@ import { DeleteOutlineOutlined, InfoOutlined } from '@mui/icons-material';
 import { Divider, IconButton, Stack } from '@mui/material';
 import styled from '@emotion/styled';
 
+interface DeleteModalProps {
+    message?: string;
+    button?: React.ReactNode;
+}
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -18,8 +23,11 @@ const style = {
     pt: 3,
     pb: 2,
 };
-
-const StyledPrimaryButton = styled(Button)(({ theme, root }) => ({
+interface StyledPrimaryButtonProps {
+    root?: any;
+    theme?: any;
+  }
+const StyledPrimaryButton = styled(Button)(({ root }: StyledPrimaryButtonProps) => ({
     backgroundColor: '#FF800F',
     color: '#fff',
     fontSize: 13,
@@ -33,7 +41,11 @@ const StyledPrimaryButton = styled(Button)(({ theme, root }) => ({
     ...root
 }));
 
-const StyledSecondaryButton = styled(Button)(({ theme, root }) => ({
+interface StyledSecondaryButtonProps {
+    root?: any;
+    theme?: any;
+  }
+const StyledSecondaryButton = styled(Button)(({ root }: StyledSecondaryButtonProps) => ({
     color: '#FF6A31',
     border: '1px solid #FF6A31',
     fontSize: 13,
@@ -43,8 +55,7 @@ const StyledSecondaryButton = styled(Button)(({ theme, root }) => ({
     ...root
 }));
 
-
-function DeleteModal({ message, button }) {
+function DeleteModal({ message, button }: DeleteModalProps) {
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {

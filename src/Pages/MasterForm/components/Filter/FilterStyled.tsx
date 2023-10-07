@@ -101,7 +101,7 @@ export const StyledFilterChip = styled('div')(({ theme, style }) => ({
     '> svg': {
         fontSize: 14
     },
-    ...style?.root
+    // ...style?.root
 }));
 
 export const StyledTextField = styled(TextField)(({ theme,  }) => ({

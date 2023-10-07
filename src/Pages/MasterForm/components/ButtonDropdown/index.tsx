@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from "@emotion/styled";
-import { FormControl, MenuItem, Select, Typography } from "@mui/material";
+import { FormControl, MenuItem, Select, Typography, FormControlProps, SelectChangeEvent } from "@mui/material";
 
-const StyledFormControl = styled(FormControl)(({ theme, style }) => ({
+const StyledFormControl = styled(FormControl)(({ style }: { style?: any }) => ({
     // width
     'fieldset': {
         borderRadius: '16px',  // borderRadius
@@ -22,22 +22,30 @@ const StyledFormControl = styled(FormControl)(({ theme, style }) => ({
     ...style?.root
 }));
 
-const StyledLabel = styled(Typography)(({ theme, style }) => ({
+const StyledLabel = styled(Typography)(({ style }: { style?: any }) => ({
     fontSize: 13,
     color: '#252525',
     fontWeight: 500,
     ...style?.label
 }));
 
-function ButtonDropdown({ data, style, onChange, value, label }) {
+interface ButtonDropdownProps {
+    onChange: (value: string) => void;
+    data: { value: string | number; name: string | number }[];
+    style?: any;
+    value?: any;
+    label?: string | number;
+}
 
-    const handleChange = (event) => {
-        onChange(event.target.value)
+function ButtonDropdown({ data, style, onChange, value, label }: ButtonDropdownProps) {
+
+    const handleChange = (event: SelectChangeEvent) => {
+        onChange(event.target.value as string);
     };
 
     return (
-        <StyledFormControl style={style} >
-            {label ? <StyledLabel style={style}>label</StyledLabel> : null}
+        <StyledFormControl style={style}>
+            {label ? <StyledLabel style={style}>{label}</StyledLabel> : null}
             <Select
                 defaultValue={'select'}
                 value={value ? value : 'select'}

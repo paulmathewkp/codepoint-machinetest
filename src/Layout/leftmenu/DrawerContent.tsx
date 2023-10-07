@@ -17,7 +17,7 @@ export default function DrawerContent() {
     setOpen(!open);
   };
 
-  const handleNavigate = (routerValue) => {
+  const handleNavigate = (routerValue: any) => {
     navigate(routerValue);
   }
 

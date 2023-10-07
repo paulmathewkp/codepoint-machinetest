@@ -1,8 +1,9 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+
 import {
     Box, Typography, Link, Avatar, Menu, MenuItem, ListItemIcon, Divider, IconButton,
-    Tooltip, InputAdornment, TextField, Stack, FormControl, Select
+    Tooltip, InputAdornment, TextField, Stack, FormControl, Select, SelectChangeEvent
 } from '@mui/material';
 import { NavigateNext, PersonAdd, Settings, Logout, Notifications, Help, Search, ArrowBack, KeyboardArrowDown } from '@mui/icons-material';
 
@@ -10,10 +11,10 @@ import HeaderStyled, { BreadcrumbsStyled, TextFieldStyled, accountMenuPaperStyle
 import SearchTextField from '../../components/SearchTextField';
 
 const useMuiMenu = () => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
-    const handleClick = (event) => {
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -24,13 +25,17 @@ const useMuiMenu = () => {
     return { anchorEl, open, handleClick, handleClose };
 };
 
+interface MobileTextfieldProps {
+    handleMobileTextField: () => void;
+}
+
 export default function NewHeader() {
     const [showMobileTextField, setShowMobileTextField] = React.useState(false);
-
+    const [yearValue, setYearValue] = React.useState<string>('2022-23');
 
     const accountMenu = useMuiMenu();
 
-    function handleClick(event) {
+    function handleClick(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');
     }
@@ -44,6 +49,7 @@ export default function NewHeader() {
             setShowMobileTextField(false);
         }
     };
+
     React.useEffect(() => {
         window.addEventListener('resize', handleWindowSizeChange);
         return () => {
@@ -51,9 +57,7 @@ export default function NewHeader() {
         };
     }, []);
 
-    const [yearValue, setYearValue] = React.useState('2022-23');
-
-    const handleYearChange = (event) => {
+    const handleYearChange = (event: SelectChangeEvent<string>) => {
         setYearValue(event.target.value);
     };
 
@@ -64,26 +68,24 @@ export default function NewHeader() {
             ) : (
                 <>
                     <Box className='headerBarRightBox'>
-                        <Typography component='h2'>Teacher Notes</Typography>
+                        <Typography component='h2'>Teacher Notesaaaa</Typography>
                         <div role="presentation" onClick={handleClick}>
                             <BreadcrumbsStyled aria-label="breadcrumb" separator={<NavigateNext fontSize="small" />}>
                                 <Link underline="hover" color="inherit" href="/">Dashboard</Link>
                                 <Link underline="hover" color="inherit" href="/material-ui/getting-started/installation/">2021-2022</Link>
                                 <Typography className='selected'>Teachers Notes</Typography>
-                                {/* <Typography className='selected'>Teachers Notes</Typography>
-                                <Typography className='selected'>Teachers Notes</Typography> */}
                             </BreadcrumbsStyled>
                         </div>
                     </Box>
                     <Box className='headerBarLeftBox'>
-                        {/* <TextFieldStyled sx={{ display: { xs: 'none', md: 'block' } }} placeholder='Search' InputProps={{ startAdornment: (<InputAdornment position="start"><Search /></InputAdornment>), }} /> */}
                         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                             <SearchTextField
                                 placeholder='Search'
                                 style={{
                                     root: { width: '190px' },
                                     input: { padding: '7px' },
-                                }} />
+                                }}
+                            />
                         </Box>
                         <FormControl
                             sx={{
@@ -132,7 +134,6 @@ export default function NewHeader() {
                                         </IconButton>
                                     </Tooltip>
                                 </Stack>
-
                             </Box>
                             <Menu
                                 anchorEl={accountMenu.anchorEl}
@@ -171,13 +172,14 @@ export default function NewHeader() {
                                 </MenuItem>
                             </Menu>
                         </Box>
-                    </Box></>
+                    </Box>
+                </>
             )}
         </HeaderStyled>
     )
 }
 
-function MobileTextfield({ handleMobileTextField }) {
+function MobileTextfield({ handleMobileTextField }: MobileTextfieldProps) {
     const IconBtnStyle = styled(IconButton)(({ theme }) => ({
         '.MuiSvgIcon-root': {
             color: '#616161',
@@ -195,7 +197,8 @@ function MobileTextfield({ handleMobileTextField }) {
                     style={{
                         root: { width: 'calc(100vw - 200px)' },
                         input: { padding: '7px' },
-                    }} />
+                    }}
+                />
             </Stack>
         </Box>
     )

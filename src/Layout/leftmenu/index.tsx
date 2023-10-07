@@ -5,7 +5,7 @@ import { StyledLeftMenu } from './components/StyledLeftMenu';
 
 import DrawerContent from './DrawerContent';
 
-function Leftmenu(props) {
+function Leftmenu(props: any) {
 
     return (
         <StyledLeftMenu>

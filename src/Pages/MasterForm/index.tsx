@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box, Collapse, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography,
     Checkbox as MuiCheckbox, FormControl, Select, MenuItem, TextField,
@@ -138,12 +138,24 @@ export default function MasterForm() {
     const [showAddForm, setShowAddForm] = React.useState(false);
     const [isChecked, setIsChecked] = React.useState(false);
     const [selectedForm, setSelectedForm] = React.useState(0);
-    const [tableData, setTableData] = React.useState(tableValue);
     const [selectedItemIndex, setSelectedItemIndex] = React.useState(null);
+    const [dataFromApi, setDataFromApi] = useState([]);
 
     const handleCheckboxStatus = () => {
         setIsChecked((prev) => !prev);
     }
+    useEffect(() => {
+        fetch('https://tmsv4.stagingcp.co/api/machine-test')
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('data is--->', data);
+            setDataFromApi(data.data);
+          })
+          .catch((error) => {
+            console.error('Error in fetching data:', error);
+          });
+      }, []);
+      console.log('dataFromApi is--->', dataFromApi);
 
     const handleAddFormDisplay = () => {
         setShowAddForm((prev) => !prev);
@@ -255,11 +267,12 @@ export default function MasterForm() {
                                     </Stack>
                                 )}
                                 <Box p={1}>
-                                    <DragableTable
+                                    
+                                    {dataFromApi && <DragableTable
                                         checked={isChecked}
                                         handleCheckbox={handleCheckboxStatus}
-                                        data={tableData}
-                                    />
+                                        data={dataFromApi}
+                                    />}
                                 </Box>
                             </Box>
                         ) : (
@@ -296,17 +309,17 @@ export default function MasterForm() {
                                     </Stack>
                                     <Stack direction='row' gap='10px' justifyContent='end'>
                                         <StyledSecondaryButton
-                                            root={{
-                                                padding: '3px 12px',
-                                            }}
+                                            // root={{
+                                            //     padding: '3px 12px',
+                                            // }}
                                             onClick={() => handleAddFormDisplay()}
                                         >
                                             Cancel
                                         </StyledSecondaryButton>
                                         <StyledPrimaryButton
-                                            root={{
-                                                padding: '3px 12px',
-                                            }}
+                                            // root={{
+                                            //     padding: '3px 12px',
+                                            // }}
                                             onClick={() => handleAddFormDisplay()}
                                         >
                                             Save
@@ -331,28 +344,17 @@ export default function MasterForm() {
     )
 }
 
-const dropDowndata = [
-    {
-        name: 'Active',
-        value: 'active',
-    },
-    {
-        name: 'Inactive',
-        value: 'inactive',
-    }
-];
-
-function DragableTable({ checked, handleCheckbox, data }) {
+function DragableTable({ checked, handleCheckbox, data }) {    
     const [form, setForm] = React.useState(data);
     const draggingItem = React.useRef();
     const dragOverItem = React.useRef();
-
-    const handleStatusChange = (value, index) => {
-        let updatedForm = [...form];
-        updatedForm[index].status = value;
-        setForm(updatedForm);
-    };
-
+    const [selectedValue, setSelectedValue] = useState(10);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1); // Initial current page
+    const handleItemsPerPageChange = (event) => {
+        setItemsPerPage(event.target.value);
+        setCurrentPage(1); // current page
+      };
     const handleDragStart = (e, position) => {
         draggingItem.current = position;
         // console.log(e.target.innerHTML);
@@ -379,7 +381,7 @@ function DragableTable({ checked, handleCheckbox, data }) {
 
     const handleDragEnd = (e) => {
         const listCopy = [...form];
-        const draggingItemContent = listCopy[draggingItem.current];
+        const draggingItemContent = listCopy[e?.current];
         listCopy.splice(draggingItem.current, 1);
         listCopy.splice(dragOverItem.current, 0, draggingItemContent);
 
@@ -387,12 +389,9 @@ function DragableTable({ checked, handleCheckbox, data }) {
         dragOverItem.current = null;
         setForm(listCopy);
     };
-
-    const [perPageValue, setPerPageValue] = React.useState(10);
-
-    const handlePerPageChange = (event) => {
-        setPerPageValue(event.target.value);
-    };
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const displayedData = data.slice(startIndex, endIndex);
 
     return (
         <>
@@ -413,7 +412,7 @@ function DragableTable({ checked, handleCheckbox, data }) {
                         </TableCell>
                         <TableCell>
                             <Stack direction='row' alignItems='center' gap='5px' sx={{ display: 'inline-flex' }}>
-                                <Typography sx={{ fontSize: 13, color: '#5F5F5F', fontWeight: 500, }}>Name</Typography>
+                                <Typography sx={{ fontSize: 13, color: '#5F5F5F', fontWeight: 500, }}>First Name</Typography>
                                 <Box role='button' sx={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}>
                                     <KeyboardArrowUp />
                                     <KeyboardArrowDown sx={{ mt: '-8px' }} />
@@ -423,18 +422,18 @@ function DragableTable({ checked, handleCheckbox, data }) {
                         </TableCell>
                         <TableCell>
                             <Stack direction='row' alignItems='center' gap='5px' sx={{ display: 'inline-flex' }}>
-                                <Typography sx={{ fontSize: 13, color: '#5F5F5F', fontWeight: 500, }}>Status</Typography>
+                                <Typography sx={{ fontSize: 13, color: '#5F5F5F', fontWeight: 500, }}>ID</Typography>
                                 <Box role='button' sx={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}>
                                     <KeyboardArrowUp />
                                     <KeyboardArrowDown sx={{ mt: '-8px' }} />
                                 </Box>
                             </Stack>
                         </TableCell>
-                        <TableCell align='center'>Action</TableCell>
+                        <TableCell align='center'>Gender</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {form.length === 0 || form === null ? (
+                    {data.length === 0 || data === null ? (
                         <TableRow>
                             <TableCell colSpan={5} sx={{
                                 width: '100%', padding: '100px 0', textAlign: 'center',
@@ -444,7 +443,7 @@ function DragableTable({ checked, handleCheckbox, data }) {
                             </TableCell>
                         </TableRow>
                     ) : (
-                        form.map((item, index) => (
+                        data.map((item, index) => (
                             <TableRow
                                 draggable
                                 onDragStart={(e) => handleDragStart(e, index)}
@@ -459,36 +458,13 @@ function DragableTable({ checked, handleCheckbox, data }) {
                                     <DragIndicator sx={{ fontSize: 27, color: '#DDE2E4', cursor: 'grab' }} />
                                 </TableCell>
                                 <TableCell sx={{ width: '80px' }}><MuiCheckbox checked={checked} /> </TableCell>
-                                <TableCell>{item.name}</TableCell>
+                                <TableCell>{item.first_name}</TableCell>
                                 <TableCell>
                                     <Box sx={{ minWidth: 120 }}>
-
-                                        {/* drop down  */}
-                                        <ButtonDropdown
-                                            value={item.status}
-                                            data={dropDowndata}
-                                            onChange={(data) => handleStatusChange(data, index)}
-                                            style={{
-                                                select: {
-                                                    backgroundColor: item.status === 'active' ? '#e1ecfe' : item.status === 'inactive' ? '#fcd6d6' : '#F5F5F5',
-                                                    color: item.status === 'active' ? '#0e5ee1' : item.status === 'inactive' ? '#ef2424' : '#00000'
-                                                },
-                                                root: { width: '100px' }
-                                            }}
-                                        />
+                                    <TableCell>{item.id}</TableCell>
                                     </Box>
                                 </TableCell>
-                                <TableCell align='center' sx={{ width: '80px', 'button': { color: '#252525', 'svg': { fontSize: 20 } } }}>
-                                    <Stack direction='row' alignItems='center'>
-                                        <IconButton>
-                                            <EditNote />
-                                        </IconButton>
-                                        <DeleteModal />
-                                        <IconButton>
-                                            {/* <DeleteOutline /> */}
-                                        </IconButton>
-                                    </Stack>
-                                </TableCell>
+                                <TableCell>{item.gender}</TableCell>
                             </TableRow>
 
                         ))
@@ -501,8 +477,8 @@ function DragableTable({ checked, handleCheckbox, data }) {
                 <Stack direction='row' gap='5px' alignItems='center'>
                     <FormControl sx={{ '.MuiSelect-select ': { padding: '5px' } }}>
                         <Select
-                            value={perPageValue}
-                            onChange={handlePerPageChange}
+                            value={selectedValue}
+                            onChange={handleItemsPerPageChange}
                         >
                             <MenuItem value={10}>10</MenuItem>
                             <MenuItem value={20}>20</MenuItem>

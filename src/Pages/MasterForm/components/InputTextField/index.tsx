@@ -1,16 +1,22 @@
 import styled from "@emotion/styled";
-import { Stack, TextField } from "@mui/material";
+import { Stack, TextField, StackProps } from "@mui/material";
 import PropTypes from 'prop-types';
 
-const StyledLabel = styled('label')(({ theme, style }) => ({
+interface InputTextFieldProps {
+    style?: any;
+    placeholder?: any;
+    label?: string | number;
+}
+
+const StyledLabel = styled('label')(({ theme, style }: { theme?: any, style?: any }) => ({
     display: 'block',
     color: '#252525',
     fontSize: 13,
     fontWeight: 500,
-    ...style?.label
+    ...(style?.label || {})
 }));
 
-const StyledInput = styled(TextField)(({ theme, style }) => ({
+const StyledInput = styled(TextField)(({ style }: { style?: any }) => ({
     'input': {
         padding: '8px 10px',
         fontWeight: 500,
@@ -22,17 +28,16 @@ const StyledInput = styled(TextField)(({ theme, style }) => ({
     'fieldset': {
         borderRadius: '4px',
     },
-    ...style?.input
+    ...(style?.input || {})
 }));
 
-function InputTextField({ style, placeholder, label }) {
-
+function InputTextField({ style, placeholder, label }: InputTextFieldProps) {
     return (
-        <Stack sx={{ gap: '5px', ...style?.stack }}>
-            {label ? <StyledLabel>{label}</StyledLabel> : null}
+        <Stack sx={{ gap: '5px', ...(style?.stack || {}) }}>
+            {label ? <StyledLabel style={style}>{label}</StyledLabel> : null}
             <StyledInput
                 style={style}
-                placeholder={placeholder ? placeholder : null}
+                placeholder={placeholder ? placeholder : undefined}
             />
         </Stack>
     )
